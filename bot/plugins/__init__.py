@@ -29,10 +29,10 @@ class Plugin(ABC):
 
 
 # Import plugins for convenience
-from plugins.help import HelpPlugin
-from plugins.summarize import SummarizePlugin
-from plugins.mention_reply import MentionReplyPlugin
-from plugins.auto_download import AutoDownloadPlugin
+from .help import HelpPlugin
+from .summarize import SummarizePlugin
+from .mention_reply import MentionReplyPlugin
+from .auto_download import AutoDownloadPlugin
 
 __all__ = [
     'Plugin',

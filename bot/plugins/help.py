@@ -1,7 +1,7 @@
 """Help plugin."""
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
-from plugins import Plugin
+from . import Plugin
 import logging
 
 logger = logging.getLogger(__name__)

@@ -1,10 +1,11 @@
 """Summarize plugin for /tldr command."""
+from html import escape
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
-from plugins import Plugin
-from core.ai import AIService
-from core.rate_limiter import RateLimiter
-from storage.memory import MemoryStorage
+from . import Plugin
+from ..core.ai import AIService
+from ..core.rate_limiter import RateLimiter
+from ..storage.memory import MemoryStorage
 import logging
 
 logger = logging.getLogger(__name__)
@@ -55,8 +56,8 @@ class SummarizePlugin(Plugin):
             return
         
         progress_msg = await update.message.reply_text(
-            "⏳ _Analyzing your chat... This better be worth my time._",
-            parse_mode="Markdown"
+            "⏳ <i>Analyzing your chat... This better be worth my time.</i>",
+            parse_mode="HTML"
         )
         
         self.rate_limiter.record_use(user_id)
@@ -65,18 +66,22 @@ class SummarizePlugin(Plugin):
         combined_text = "\n".join(messages)
         summary = self.ai.get_summary(combined_text, len(messages))
         
-        final_text = f"📝 *Summary* (last {len(messages)} messages)\n\n{summary}"
+        final_text = (
+            f"📝 <b>Summary</b> (last {len(messages)} messages)\n\n{escape(summary)}"
+        )
         if remaining <= 3:
-            final_text += f"\n\n⚠️ _You have {remaining} uses left today. Pace yourself._"
+            final_text += (
+                f"\n\n⚠️ <i>You have {remaining} uses left today. Pace yourself.</i>"
+            )
         
         try:
             await progress_msg.edit_text(
                 final_text,
-                parse_mode="Markdown"
+                parse_mode="HTML"
             )
         except Exception as e:
             logger.warning(f"Failed to edit message: {e}")
-            await update.message.reply_text(final_text, parse_mode="Markdown")
+            await update.message.reply_text(final_text, parse_mode="HTML")
         
         self.memory.set_summary_context(chat_id, progress_msg.message_id, messages)
         

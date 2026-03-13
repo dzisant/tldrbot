@@ -61,7 +61,7 @@ class AIService:
                     {"role": "system", "content": SUMMARY_SYSTEM_PROMPT},
                     {"role": "user", "content": f"Summarize this conversation ({num_messages} messages):\n\n{messages_text}"}
                 ],
-                max_tokens=500
+                max_completion_tokens=500
             )
             summary = response.choices[0].message.content or "I got nothing. Your chat broke me."
             remark = random.choice(SNARKY_SUMMARY_REMARKS)
@@ -88,7 +88,7 @@ class AIService:
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=messages,  # type: ignore
-                max_tokens=300
+                max_completion_tokens=300
             )
             
             reply = response.choices[0].message.content or "I have no words. And that's saying something."

@@ -5,10 +5,10 @@ TLDRBot - A witty Telegram bot for group chat summarization.
 import logging
 from telegram.ext import MessageHandler, filters
 
-import config
-from core import TLDRBot, AIService, RateLimiter
-from plugins import HelpPlugin, SummarizePlugin, MentionReplyPlugin, AutoDownloadPlugin
-from storage import MemoryStorage
+from . import config
+from .core import TLDRBot, AIService, RateLimiter
+from .plugins import HelpPlugin, SummarizePlugin, MentionReplyPlugin, AutoDownloadPlugin
+from .storage import MemoryStorage
 
 # Configure logging
 logging.basicConfig(

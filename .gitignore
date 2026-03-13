@@ -9,3 +9,4 @@ pyproject.toml
 bot/data/*.sqlite
 bot/data/*.db
 .cursor
+.vscode

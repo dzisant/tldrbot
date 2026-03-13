@@ -1,10 +1,10 @@
 """Mention reply plugin."""
 from telegram import Update
 from telegram.ext import Application, MessageHandler, ContextTypes, filters
-from plugins import Plugin
-from core.ai import AIService
-from core.rate_limiter import RateLimiter
-from storage.memory import MemoryStorage
+from . import Plugin
+from ..core.ai import AIService
+from ..core.rate_limiter import RateLimiter
+from ..storage.memory import MemoryStorage
 import logging
 
 logger = logging.getLogger(__name__)

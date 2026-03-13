@@ -7,8 +7,8 @@ import random
 import yt_dlp
 from telegram import Update, Message
 from telegram.ext import Application, MessageHandler, ContextTypes, filters
-from plugins import Plugin
-from config import VIDEO_URL_PATTERNS
+from . import Plugin
+from ..config import VIDEO_URL_PATTERNS
 
 logger = logging.getLogger(__name__)
 

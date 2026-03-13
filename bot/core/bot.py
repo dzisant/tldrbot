@@ -5,7 +5,7 @@ from telegram.ext import Application, ApplicationBuilder
 from typing import List, Callable, Awaitable, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from plugins import Plugin
+    from ..plugins import Plugin
 
 logger = logging.getLogger(__name__)
 
