@@ -33,7 +33,7 @@ class RateLimiter:
     
     def get_limit_message(self) -> str:
         return (
-            f"🛑 Whoa there, chatty! You've used me {self.max_uses_per_day} times today. "
-            "I need a break from your neediness. Try again tomorrow."
+            f"🛑 Полегче, болтун! Сегодня ты использовал меня {self.max_uses_per_day} раз. "
+            "Мне нужна передышка от твоей навязчивости. Попробуй снова завтра."
         )
 

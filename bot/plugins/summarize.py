@@ -23,7 +23,7 @@ class SummarizePlugin(Plugin):
     
     @property
     def commands(self):
-        return [("tldr", "Summarize recent messages")]
+        return [("tldr", "Пересказать последние сообщения")]
     
     def register(self, app: Application) -> None:
         app.add_handler(CommandHandler("tldr", self.summarize))
@@ -49,14 +49,14 @@ class SummarizePlugin(Plugin):
         messages = self.memory.get_recent_messages(chat_id, num_messages)
         if not messages:
             await update.message.reply_text(
-                "🤷 I don't have any messages to summarize. "
-                "Either you just added me or everyone's been unusually quiet. "
-                "Both are concerning."
+                "🤷 У меня нет сообщений, чтобы сделать пересказ. "
+                "Либо вы только что меня добавили, либо все неожиданно притихли. "
+                "И то, и другое настораживает."
             )
             return
         
         progress_msg = await update.message.reply_text(
-            "⏳ <i>Analyzing your chat... This better be worth my time.</i>",
+            "⏳ <i>Анализирую ваш чат... Надеюсь, это того стоит.</i>",
             parse_mode="HTML"
         )
         
@@ -67,11 +67,11 @@ class SummarizePlugin(Plugin):
         summary = self.ai.get_summary(combined_text, len(messages))
         
         final_text = (
-            f"📝 <b>Summary</b> (last {len(messages)} messages)\n\n{escape(summary)}"
+            f"📝 <b>Сводка</b> (последние {len(messages)} сообщений)\n\n{escape(summary)}"
         )
         if remaining <= 3:
             final_text += (
-                f"\n\n⚠️ <i>You have {remaining} uses left today. Pace yourself.</i>"
+                f"\n\n⚠️ <i>Сегодня осталось {remaining} использований. Не трать всё сразу.</i>"
             )
         
         try:
@@ -80,16 +80,16 @@ class SummarizePlugin(Plugin):
                 parse_mode="HTML"
             )
         except Exception as e:
-            logger.warning(f"Failed to edit message: {e}")
+            logger.warning(f"Не удалось отредактировать сообщение: {e}")
             await update.message.reply_text(final_text, parse_mode="HTML")
         
         self.memory.set_summary_context(chat_id, progress_msg.message_id, messages)
         
         logger.info(
-            "ChatGPT summary response for user %s in chat %s: %s",
+            "Ответ пересказа для пользователя %s в чате %s: %s",
             user_id,
             chat_id,
             summary
         )
-        logger.info(f"Summary generated for user {user_id} in chat {chat_id} ({len(messages)} messages)")
+        logger.info(f"Пересказ создан для пользователя {user_id} в чате {chat_id} ({len(messages)} сообщений)")
 

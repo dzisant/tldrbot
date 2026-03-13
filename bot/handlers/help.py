@@ -18,29 +18,29 @@ class HelpHandler(BaseHandler):
         self.log_analytics(update, "help_command")
 
         help_text = (
-            "🤖 *Welcome to TLDR Bot!* 🤖\n\n"
-            "I help you summarize conversations and provide insights. Here's what I can do:\n\n"
-            "*Commands:*\n"
-            "• `/tldr [number]` — Summarize the last [number] messages (default: 50)\n"
-            "• `/dl [URL]` — Download TikToks, Reels, Shorts, etc. (WIP: might not work sometimes)\n"
-            "• `/switch_model <provider>` — Change the AI model\n"
-            "• `/set_api_key <provider> <key>` — Set your own API key for a provider (BYOK)\n"
-            "    Valid providers: `openai`, `groq`, `deepseek`\n"
-            "• `/clear_api_key <provider>` — Remove your API key for a provider\n"
-            "    Valid providers: `openai`, `groq`, `deepseek`\n"
-            "• `/list_providers` — List all valid provider names\n"
-            "• `/set_receipt_model <model>` — Choose OpenAI model for receipt parsing\n"
-            "\n*Available Models:*\n"
+            "🤖 *Добро пожаловать в TLDR Bot!* 🤖\n\n"
+            "Я помогаю пересказывать разговоры и выделять главное. Вот что я умею:\n\n"
+            "*Команды:*\n"
+            "• `/tldr [number]` — Пересказать последние [number] сообщений (по умолчанию: 50)\n"
+            "• `/dl [URL]` — Скачать TikTok, Reels, Shorts и т. п. (в разработке: иногда может не работать)\n"
+            "• `/switch_model <provider>` — Сменить модель ИИ\n"
+            "• `/set_api_key <provider> <key>` — Установить свой API-ключ провайдера (BYOK)\n"
+            "    Допустимые провайдеры: `openai`, `groq`, `deepseek`\n"
+            "• `/clear_api_key <provider>` — Удалить свой API-ключ провайдера\n"
+            "    Допустимые провайдеры: `openai`, `groq`, `deepseek`\n"
+            "• `/list_providers` — Показать все допустимые имена провайдеров\n"
+            "• `/set_receipt_model <model>` — Выбрать модель OpenAI для разбора чека\n"
+            "\n*Доступные модели:*\n"
             "• `openai-mini` — GPT-4o mini\n"
             "• `openai-4o` — GPT-4o\n"
             "• `openai-4.1` — GPT-4.1 (turbo)\n"
-            "• `groq` — Uses Llama 3 (8bn) hosted by groq\n"
+            "• `groq` — Llama 3 (8bn) на groq\n"
             "• `deepseek` — DeepSeek V3\n"
-            "\n*Features:*\n"
-            "• Reply to my summaries with questions for more insights\n"
-            "• View sentiment analysis in summaries\n"
-            "• Get key events extracted from conversations\n"
-            "\n*Current model:* " + str(self.ai_service.get_current_model())
+            "\n*Возможности:*\n"
+            "• Отвечать на пересказы вопросами для более глубоких выводов\n"
+            "• Смотреть анализ настроения в пересказах\n"
+            "• Получать ключевые события из разговоров\n"
+            "\n*Текущая модель:* " + str(self.ai_service.get_current_model())
         )
 
         await self.safe_reply(update, context, help_text, parse_mode="Markdown")
@@ -48,33 +48,33 @@ class HelpHandler(BaseHandler):
     async def inline_query(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle inline queries."""
         if not hasattr(update, "inline_query") or update.inline_query is None:
-            logger.warning("No inline_query found in update for inline_query handler.")
+            logger.warning("В обновлении не найден inline_query для обработчика inline_query.")
             return
 
         query = getattr(update.inline_query, "query", "")
         results = [
             InlineQueryResultArticle(
                 id=str(uuid4()),
-                title="Summarize Conversation",
+                title="Пересказать разговор",
                 input_message_content=InputTextMessageContent(f"/tldr"),
-                description="Summarize the conversation in the group chat",
+                description="Сделать пересказ разговора в групповом чате",
             ),
             InlineQueryResultArticle(
                 id=str(uuid4()),
-                title="Start",
+                title="Старт",
                 input_message_content=InputTextMessageContent(f"/start"),
-                description="Start the bot",
+                description="Запустить бота",
             ),
             InlineQueryResultArticle(
                 id=str(uuid4()),
-                title="Help",
+                title="Помощь",
                 input_message_content=InputTextMessageContent(f"/help"),
-                description="Display help information",
+                description="Показать справку",
             ),
         ]
 
         if hasattr(update.inline_query, "answer") and callable(update.inline_query.answer):
             await update.inline_query.answer(results)
         else:
-            logger.warning("inline_query.answer is not available on update.inline_query.")
+            logger.warning("inline_query.answer недоступен в update.inline_query.")
 

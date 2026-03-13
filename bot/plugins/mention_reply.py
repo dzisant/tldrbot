@@ -35,7 +35,7 @@ class MentionReplyPlugin(Plugin):
     async def _store_bot_username(self, app: Application) -> None:
         bot_info = await app.bot.get_me()
         self.bot_username = f"@{bot_info.username}".lower()
-        logger.info(f"Bot username stored: {self.bot_username}")
+        logger.info(f"Имя бота сохранено: {self.bot_username}")
     
     async def handle_mention(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if not update.message or not update.message.text or not update.effective_user:
@@ -74,7 +74,7 @@ class MentionReplyPlugin(Plugin):
                 self.bot_username.replace("@", ""), ""
             ).strip()
         if not user_message:
-            user_message = "Hey"
+            user_message = "Привет"
         
         recent_messages = self.memory.get_recent_messages(chat_id, 20)
         context_text = "\n".join(recent_messages[-10:]) if recent_messages else None
@@ -87,9 +87,9 @@ class MentionReplyPlugin(Plugin):
         remaining = self.rate_limiter.remaining(user_id)
         if remaining <= 2:
             await update.message.reply_text(
-                f"_({remaining} uses left today. Just so you know.)_",
+                f"_(Сегодня осталось {remaining} использований. Просто чтобы ты знал.)_",
                 parse_mode="Markdown"
             )
         
-        logger.info(f"Mention response sent to user {user_id}")
+        logger.info(f"Ответ на упоминание отправлен пользователю {user_id}")
 

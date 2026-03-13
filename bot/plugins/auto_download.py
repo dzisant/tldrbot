@@ -15,26 +15,26 @@ logger = logging.getLogger(__name__)
 URL_PATTERNS = [re.compile(pattern, re.IGNORECASE) for pattern in VIDEO_URL_PATTERNS]
 
 PROCESSING_MESSAGES = [
-    "⏳ Spotted a video link! Fetching it for you...",
-    "⏳ Video detected! Let me grab that...",
-    "⏳ Hold on, downloading your video...",
-    "⏳ I see you found something. Downloading...",
-    "⏳ Video link detected. Working on it...",
+    "⏳ Нашёл ссылку на видео! Сейчас скачаю...",
+    "⏳ Видео обнаружено! Сейчас заберу...",
+    "⏳ Секунду, скачиваю ваше видео...",
+    "⏳ Вижу, вы нашли что-то интересное. Скачиваю...",
+    "⏳ Ссылка на видео обнаружена. Работаю...",
 ]
 
 SUCCESS_MESSAGES = [
-    "🎬 Detected your TikTok addiction. Here's the video.",
-    "🎬 I see you found something worth sharing. Here it is.",
-    "🎬 Another video? Fine, I'll fetch it. You're welcome.",
-    "🎬 Your wish is my command. Unfortunately.",
-    "🎬 Downloaded. Try not to spend all day watching these.",
+    "🎬 Заметил твою зависимость от TikTok. Вот видео.",
+    "🎬 Вижу, ты нашёл что-то достойное. Держи.",
+    "🎬 Снова видео? Ладно, держи. Пожалуйста.",
+    "🎬 Ваше желание — мой приказ. К сожалению.",
+    "🎬 Скачано. Постарайся не залипать тут весь день.",
 ]
 
 ERROR_MESSAGES = [
-    "😅 I tried to download that video but it didn't work. Maybe the link is broken?",
-    "🤷 Couldn't fetch that video. The internet gremlins got it.",
-    "😬 Download failed. Maybe try a different link?",
-    "💀 That video didn't want to be downloaded. Can't blame it.",
+    "😅 Я попытался скачать это видео, но не вышло. Может, ссылка битая?",
+    "🤷 Не смог скачать это видео. Интернет-гремлины постарались.",
+    "😬 Скачивание не удалось. Попробуй другую ссылку?",
+    "💀 Это видео не захотело скачиваться. Не могу его винить.",
 ]
 
 
@@ -57,7 +57,7 @@ class AutoDownloadPlugin(Plugin):
     
     async def _start_worker(self, app: Application) -> None:
         self._worker_task = asyncio.create_task(self._download_worker(app))
-        logger.info("Download worker started")
+        logger.info("Воркер загрузки запущен")
     
     async def _stop_worker(self, app: Application) -> None:
         if self._worker_task:
@@ -66,7 +66,7 @@ class AutoDownloadPlugin(Plugin):
                 await self._worker_task
             except asyncio.CancelledError:
                 pass
-            logger.info("Download worker stopped")
+            logger.info("Воркер загрузки остановлен")
     
     def _extract_video_url(self, text: str) -> str | None:
         url_pattern = r'https?://[^\s<>"{}|\\^`\[\]]+'
@@ -88,7 +88,7 @@ class AutoDownloadPlugin(Plugin):
         if not chat_id:
             return
         
-        logger.info(f"Video URL detected: {url}")
+        logger.info(f"Обнаружен URL видео: {url}")
         status_msg = await update.message.reply_text(random.choice(PROCESSING_MESSAGES))
         
         job = {
@@ -99,7 +99,7 @@ class AutoDownloadPlugin(Plugin):
             "bot": context.bot,
         }
         await self._download_queue.put(job)
-        logger.info(f"Download job queued for {url}")
+        logger.info(f"Задача скачивания поставлена в очередь для {url}")
     
     async def _download_worker(self, app: Application) -> None:
         while True:
@@ -111,9 +111,9 @@ class AutoDownloadPlugin(Plugin):
                 status_msg: Message = job["status_message"]
                 bot = job["bot"]
                 
-                logger.info(f"Processing download: {url}")
+                logger.info(f"Обрабатываю скачивание: {url}")
                 try:
-                    await status_msg.edit_text("⏳ Downloading... This might take a moment.")
+                    await status_msg.edit_text("⏳ Скачиваю... Это может занять немного времени.")
                 except Exception:
                     pass
                 
@@ -132,12 +132,12 @@ class AutoDownloadPlugin(Plugin):
                                 caption=random.choice(SUCCESS_MESSAGES),
                                 reply_to_message_id=reply_to
                             )
-                        logger.info(f"Video sent for {url}")
+                        logger.info(f"Видео отправлено для {url}")
                     except Exception as e:
-                        logger.error(f"Failed to send video: {e}")
+                        logger.error(f"Не удалось отправить видео: {e}")
                         await bot.send_message(
                             chat_id=chat_id, reply_to_message_id=reply_to,
-                            text="😬 Downloaded but couldn't send. File might be too large."
+                            text="😬 Скачал, но не смог отправить. Файл может быть слишком большим."
                         )
                     
                     try:
@@ -155,7 +155,7 @@ class AutoDownloadPlugin(Plugin):
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"Download worker error: {e}")
+                logger.error(f"Ошибка воркера загрузки: {e}")
                 await asyncio.sleep(1)
     
     async def _download_video(self, url: str) -> str | None:
@@ -180,5 +180,5 @@ class AutoDownloadPlugin(Plugin):
                     return ydl.prepare_filename(info_dict)
             return await loop.run_in_executor(None, download)
         except Exception as e:
-            logger.error(f"yt-dlp error for {url}: {e}")
+            logger.error(f"Ошибка yt-dlp для {url}: {e}")
             return None

@@ -19,7 +19,7 @@ class TLDRBot:
     
     def register_plugin(self, plugin: 'Plugin') -> None:
         self._plugins.append(plugin)
-        logger.info(f"Registered plugin: {plugin.name}")
+        logger.info(f"Плагин зарегистрирован: {plugin.name}")
     
     def setup(self) -> Application:
         self.application = ApplicationBuilder().token(self.token).build()
@@ -31,7 +31,7 @@ class TLDRBot:
             if self.application.post_init and self.application.post_init != original_post_init:
                 self._post_init_callbacks.append(self.application.post_init)
                 original_post_init = self.application.post_init
-            logger.info(f"Plugin '{plugin.name}' handlers registered")
+            logger.info(f"Обработчики плагина '{plugin.name}' зарегистрированы")
         
         self._post_init_callbacks.append(self._setup_commands)
         self.application.post_init = self._run_all_post_init
@@ -50,16 +50,16 @@ class TLDRBot:
         
         if commands:
             await application.bot.set_my_commands(commands)
-            logger.info(f"Registered {len(commands)} bot commands")
+            logger.info(f"Зарегистрировано команд бота: {len(commands)}")
     
     def run_polling(self) -> None:
         if not self.application:
             self.setup()
-        logger.info("Starting bot in polling mode...")
+        logger.info("Запуск бота в режиме опроса...")
         self.application.run_polling()  # type: ignore[union-attr]
     
     def run_webhook(self, listen: str, port: int, url_path: str, webhook_url: str) -> None:
         if not self.application:
             self.setup()
-        logger.info(f"Starting bot in webhook mode on port {port}...")
+        logger.info(f"Запуск бота в режиме webhook на порту {port}...")
         self.application.run_webhook(listen=listen, port=port, url_path=url_path, webhook_url=webhook_url)  # type: ignore[union-attr]

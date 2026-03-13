@@ -41,7 +41,7 @@ def init_database(database_url: str) -> bool:
         globals()['UserEvent'] = UserEvent
         return True
     except Exception as e:
-        logger.error(f"Failed to init database: {e}")
+        logger.error(f"Не удалось инициализировать базу данных: {e}")
         return False
 
 

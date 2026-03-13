@@ -35,18 +35,18 @@ class BillSplitHandler(BaseHandler):
         await self.safe_reply(
             update,
             context,
-            "To split a bill, send a photo of the receipt *with a caption* describing who paid for what.\n\n"
-            "Example caption:\n"
-            "Alice: Burger, Fries\n"
-            "Bob: Salad\n"
-            "Shared: Drinks\n\n"
-            "(Make sure item names in your caption roughly match the receipt.)",
+            "Чтобы разделить счёт, отправьте фото чека *с подписью*, кто за что платил.\n\n"
+            "Пример подписи:\n"
+            "Алиса: Бургер, Картошка фри\n"
+            "Боб: Салат\n"
+            "Общее: Напитки\n\n"
+            "(Убедитесь, что названия в подписи примерно соответствуют чеку.)",
             parse_mode="Markdown"
         )
         await self.safe_reply(
             update,
             context,
-            f"Using OpenAI model {receipt_model} for receipt parsing."
+            f"Для разбора чека используется модель OpenAI {receipt_model}."
         )
         return RECEIPT_IMAGE
 
@@ -57,7 +57,7 @@ class BillSplitHandler(BaseHandler):
             await self.safe_reply(
                 update,
                 context,
-                "Please send a *photo of the receipt* with a *caption* describing who paid for what.",
+                "Пожалуйста, отправьте *фото чека* с *подписью*, кто за что платил.",
                 parse_mode="Markdown"
             )
             return RECEIPT_IMAGE
@@ -72,7 +72,7 @@ class BillSplitHandler(BaseHandler):
         user = update.effective_user
         receipt_model = self.model_handler.get_receipt_model(user.id if user is not None else 0) if self.model_handler else os.getenv('OPENAI_MODEL', OpenAIConfig.MINI_MODEL)
         
-        await self.safe_reply(update, context, f"Processing receipt and context using {receipt_model}...")
+        await self.safe_reply(update, context, f"Обрабатываю чек и контекст с помощью {receipt_model}...")
 
         # Extract receipt data
         receipt_data = await extract_receipt_data_from_image(image_bytes, receipt_model)
@@ -80,7 +80,7 @@ class BillSplitHandler(BaseHandler):
             await self.safe_reply(
                 update,
                 context,
-                "Sorry, I couldn't extract data from that receipt. Please try again with a clearer image."
+                "Извините, не удалось извлечь данные из этого чека. Попробуйте ещё раз с более чётким изображением."
             )
             return RECEIPT_IMAGE
 
@@ -96,7 +96,7 @@ class BillSplitHandler(BaseHandler):
             await self.safe_reply(
                 update,
                 context,
-                f"Context Parsing Failed: {parsing_result}\nPlease try again with a clearer caption."
+                f"Не удалось разобрать контекст: {parsing_result}\nПопробуйте ещё раз с более понятной подписью."
             )
             return RECEIPT_IMAGE
 
@@ -116,7 +116,7 @@ class BillSplitHandler(BaseHandler):
         }
 
         # Build confirmation summary
-        lines = ["I've parsed your receipt as follows:"]
+        lines = ["Я разобрал ваш чек так:"]
         # Assigned items per person
         for person, items in assignments.items():
             item_names = ", ".join(item.name for item in items)
@@ -124,12 +124,12 @@ class BillSplitHandler(BaseHandler):
         # Shared items
         if shared_items:
             shared_names = ", ".join(item.name for item in shared_items)
-            lines.append(f"- Shared: {shared_names}")
+            lines.append(f"- Общее: {shared_names}")
         # Participants
         if participants:
             parts = ", ".join(participants)
-            lines.append(f"Participants: {parts}")
-        lines.append("\nPlease reply with 'confirm' to finalize the split, send a new photo with caption to retry, or /cancel to abort.")
+            lines.append(f"Участники: {parts}")
+        lines.append("\nОтветьте 'confirm', чтобы подтвердить разделение, отправьте новое фото с подписью, чтобы повторить, или /cancel для отмены.")
 
         await self.safe_reply(update, context, "\n".join(lines))
         return CONFIRMATION
@@ -146,7 +146,7 @@ class BillSplitHandler(BaseHandler):
             await self.safe_reply(
                 update,
                 context,
-                "No active bill-splitting operation. Please use /splitbill to start."
+                "Нет активной операции разделения счёта. Используйте /splitbill, чтобы начать."
             )
             return ConversationHandler.END
 
@@ -166,7 +166,7 @@ class BillSplitHandler(BaseHandler):
         )
         
         if isinstance(split_result, str):
-            await self.safe_reply(update, context, f"Calculation error: {split_result}")
+            await self.safe_reply(update, context, f"Ошибка расчёта: {split_result}")
             if isinstance(context.user_data, dict):
                 context.user_data.pop('bill_split', None)
             return ConversationHandler.END
@@ -190,6 +190,6 @@ class BillSplitHandler(BaseHandler):
         # Optionally clean up any stored data
         if hasattr(context, "user_data") and isinstance(context.user_data, dict):
             context.user_data.pop('bill_split', None)
-        await self.safe_reply(update, context, "Bill splitting cancelled.")
+        await self.safe_reply(update, context, "Разделение счёта отменено.")
         return ConversationHandler.END
 

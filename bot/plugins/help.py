@@ -6,20 +6,20 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-HELP_TEXT = """🙄 *Oh, you need help? Shocking.* Here's what I can do:
+HELP_TEXT = """🙄 *О, тебе нужна помощь? Шокирующе.* Вот что я умею:
 
-*Commands:*
-• `/tldr [n]` — Summarize the last n messages (default: 50, max: 400)
-• `/help` — You're looking at it, genius
+*Команды:*
+• `/tldr [n]` — Пересказать последние n сообщений (по умолчанию: 50, максимум: 400)
+• `/help` — Вот это ты сейчас и читаешь, гений
 
-*Auto Features:*
-• 🎬 Drop a TikTok/Reels/Shorts link and I'll download it for you
-• 💬 @ mention me and I'll grace you with a response
+*Автофункции:*
+• 🎬 Кинь ссылку на TikTok/Reels/Shorts, и я скачаю видео
+• 💬 @ упомяни меня, и я соизволю ответить
 
-*Rate Limit:*
-You get 10 AI requests per day. Use them wisely, or don't. I'll judge you either way.
+*Лимит:*
+10 запросов к ИИ в день. Трать их с умом. Или нет. Я всё равно осужу.
 
-_I'm here to help, but I reserve the right to be sarcastic about it._ ✨"""
+_Я здесь, чтобы помогать, но оставляю за собой право на сарказм._ ✨"""
 
 
 class HelpPlugin(Plugin):
@@ -29,7 +29,7 @@ class HelpPlugin(Plugin):
     
     @property
     def commands(self):
-        return [("help", "Get help (if you really need it)")]
+        return [("help", "Получить помощь (если она тебе реально нужна)")]
     
     def register(self, app: Application) -> None:
         app.add_handler(CommandHandler("help", self.help_command))
@@ -43,5 +43,5 @@ class HelpPlugin(Plugin):
             HELP_TEXT,
             parse_mode="Markdown"
         )
-        logger.info(f"Help shown to user {update.effective_user.id if update.effective_user else 'unknown'}")
+        logger.info(f"Справка показана пользователю {update.effective_user.id if update.effective_user else 'неизвестно'}")
 

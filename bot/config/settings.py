@@ -7,7 +7,7 @@ import os
 required_vars = ["BOT_TOKEN", "OPENAI_API_KEY"]
 missing_vars = [var for var in required_vars if os.environ.get(var) is None]
 if missing_vars:
-    raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
+    raise ValueError(f"Отсутствуют обязательные переменные окружения: {', '.join(missing_vars)}")
 
 
 class TelegramConfig:

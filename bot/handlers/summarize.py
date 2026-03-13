@@ -46,7 +46,7 @@ class SummarizeHandler(BaseHandler):
         }
         
         if provider not in config_map:
-            raise ValueError(f"Unknown provider: {provider}")
+            raise ValueError(f"Неизвестный провайдер: {provider}")
 
         mapping = config_map[provider]
         if len(mapping) == 3:
@@ -67,15 +67,15 @@ class SummarizeHandler(BaseHandler):
         self.log_analytics(update, "summarize_command")
 
         if not update.effective_chat or not hasattr(update.effective_chat, "id"):
-            logger.error("No effective_chat or chat id found in update.")
-            await self.safe_reply(update, context, "Could not determine chat context.")
+            logger.error("В обновлении не найден effective_chat или id чата.")
+            await self.safe_reply(update, context, "Не удалось определить контекст чата.")
             return
 
         chat_id = update.effective_chat.id
         num_messages = self._parse_message_count(getattr(context, "args", None), default=50, max_limit=400)
 
         if not num_messages:
-            await self.safe_reply(update, context, "Invalid message count")
+            await self.safe_reply(update, context, "Некорректное количество сообщений")
             return
 
         messages_list = self.memory_storage.get_recent_messages(chat_id, num_messages)
@@ -83,7 +83,7 @@ class SummarizeHandler(BaseHandler):
         summary_prompt = self._create_summary_prompt(combined_text)
 
         # Immediately reply to user
-        await self.safe_reply(update, context, "Summarizing... I'll send the summary here when it's ready! 📝")
+        await self.safe_reply(update, context, "Делаю пересказ... пришлю его сюда, когда будет готов! 📝")
 
         # Use user's selected model/provider and key if available
         user = update.effective_user
@@ -92,7 +92,7 @@ class SummarizeHandler(BaseHandler):
             strategy = self._get_user_strategy(user.id if user is not None else 0, provider)
             self.ai_service.set_strategy(strategy)  # pyright: ignore[reportOptionalMemberAccess]
         except Exception as e:
-            logger.error(f"Error setting user strategy: {str(e)}")
+            logger.error(f"Ошибка установки пользовательской стратегии: {str(e)}")
             # fallback to default
             self.ai_service.set_strategy(StrategyRegistry.get_strategy("deepseek"))  # pyright: ignore[reportOptionalMemberAccess]
 
@@ -123,10 +123,10 @@ class SummarizeHandler(BaseHandler):
             return default
 
     def _create_summary_prompt(self, text: str) -> str:
-        return (f"{text}\nBased on the above, output the following\n\n"
-                "Summary: [4-5 Sentences]\n\n"
-                "Sentiment: [Choose between, Positive, Negative, Neutral]\n\n"
-                "Events: [List Date, Time and Nature of any upcoming events if there are any]")
+        return (f"{text}\nНа основе вышеизложенного выведи следующее\n\n"
+                "Сводка: [4-5 предложений]\n\n"
+                "Тон: [Выбери между: Позитивный, Негативный, Нейтральный]\n\n"
+                "События: [Укажи дату, время и суть предстоящих событий, если они есть]")
 
     def _format_summary(self, summary: str, user_name: str, message_count: int) -> str:
         return TextProcessor.format_summary_message(summary, user_name, message_count)

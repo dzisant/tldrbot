@@ -43,12 +43,12 @@ def main():
         if update.message and update.message.text and update.effective_chat and update.effective_user:
             if update.message.text.startswith('/'):
                 return
-            sender_name = update.effective_user.first_name or update.effective_user.username or "Someone"
+            sender_name = update.effective_user.first_name or update.effective_user.username or "Кто-то"
             memory.store_message(update.effective_chat.id, sender_name, update.message.text)
     
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, store_message), group=99)
     
-    logger.info("🤖 TLDRBot starting up...")
+    logger.info("🤖 TLDRBot запускается...")
     
     if config.WEBHOOK_URL:
         bot.run_webhook("0.0.0.0", config.PORT, config.BOT_TOKEN or "", f"{config.WEBHOOK_URL}{config.BOT_TOKEN}")

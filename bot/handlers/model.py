@@ -49,7 +49,7 @@ class ModelHandler(BaseHandler):
     def _resolve_strategy(self, user_id: int, provider: str, config_map: dict):
         """Helper function to resolve API key and model for a given provider."""
         if provider not in config_map:
-            raise ValueError(f"Unknown provider: {provider}")
+            raise ValueError(f"Неизвестный провайдер: {provider}")
 
         mapping = config_map[provider]
         if len(mapping) == 3:
@@ -70,14 +70,14 @@ class ModelHandler(BaseHandler):
         self.log_analytics(update, "switch_model_command")
 
         if not context.args or len(context.args) < 1 or not isinstance(context.args[0], str):
-            await self.safe_reply(update, context, "Please provide a model name.")
+            await self.safe_reply(update, context, "Пожалуйста, укажите имя модели.")
             return
 
         new_model = context.args[0].lower()
         available_models = StrategyRegistry.available_strategies()
         
         if new_model not in available_models:
-            await self.safe_reply(update, context, f"Invalid model name. Available models: {', '.join(available_models)}")
+            await self.safe_reply(update, context, f"Некорректное имя модели. Доступные модели: {', '.join(available_models)}")
             return
 
         user = update.effective_user
@@ -89,11 +89,11 @@ class ModelHandler(BaseHandler):
             # Use user's key if available
             strategy = self._get_user_strategy(user.id if user is not None else 0, new_model)
             self.ai_service.set_strategy(strategy)
-            await self.safe_reply(update, context, f"Model switched to {new_model}")
+            await self.safe_reply(update, context, f"Модель переключена на {new_model}")
 
         except Exception as e:
-            logger.error(f"Error switching model: {str(e)}")
-            await self.safe_reply(update, context, f"Failed to switch model: {str(e)}")
+            logger.error(f"Ошибка переключения модели: {str(e)}")
+            await self.safe_reply(update, context, f"Не удалось переключить модель: {str(e)}")
 
     async def set_api_key(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /set_api_key command."""
@@ -103,7 +103,7 @@ class ModelHandler(BaseHandler):
         
         args = context.args
         if not args or len(args) != 2:
-            await update.message.reply_text("Usage: /set_api_key <provider> <key>")
+            await update.message.reply_text("Использование: /set_api_key <provider> <key>")
             return
         
         provider, key = args
@@ -112,14 +112,14 @@ class ModelHandler(BaseHandler):
         
         if provider not in available_models:
             await update.message.reply_text(
-                f"❗ Invalid provider '{provider}'.\n"
-                f"Please use one of: {', '.join(f'`{m}`' for m in available_models)}\n"
-                "You can also use /list_providers to see all valid options."
+                f"❗ Некорректный провайдер '{provider}'.\n"
+                f"Пожалуйста, используйте один из: {', '.join(f'`{m}`' for m in available_models)}\n"
+                "Можно также использовать /list_providers, чтобы увидеть все варианты."
             )
             return
         
         set_user_api_key(user.id, provider, key)
-        await update.message.reply_text(f"API key for {provider} set successfully! Future requests will use your key.")
+        await update.message.reply_text(f"API-ключ для {provider} успешно установлен! Будущие запросы будут использовать ваш ключ.")
 
     async def clear_api_key(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /clear_api_key command."""
@@ -129,7 +129,7 @@ class ModelHandler(BaseHandler):
         
         args = context.args
         if not args or len(args) != 1:
-            await update.message.reply_text("Usage: /clear_api_key <provider>")
+            await update.message.reply_text("Использование: /clear_api_key <provider>")
             return
         
         provider = args[0].lower()
@@ -137,22 +137,22 @@ class ModelHandler(BaseHandler):
         
         if provider not in available_models:
             await update.message.reply_text(
-                f"❗ Invalid provider '{provider}'.\n"
-                f"Please use one of: {', '.join(f'`{m}`' for m in available_models)}\n"
-                "You can also use /list_providers to see all valid options."
+                f"❗ Некорректный провайдер '{provider}'.\n"
+                f"Пожалуйста, используйте один из: {', '.join(f'`{m}`' for m in available_models)}\n"
+                "Можно также использовать /list_providers, чтобы увидеть все варианты."
             )
             return
         
         clear_user_api_key(user.id, provider)
-        await update.message.reply_text(f"API key for {provider} cleared. The bot will use the default key.")
+        await update.message.reply_text(f"API-ключ для {provider} очищен. Бот будет использовать ключ по умолчанию.")
 
     async def list_providers(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /list_providers command."""
         available_models = StrategyRegistry.available_strategies()
         msg = (
-            "🗝️ *Valid Providers for BYOK and Model Switching:*\n\n"
+            "🗝️ *Допустимые провайдеры для BYOK и переключения моделей:*\n\n"
             + "\n".join(f"• `{m}`" for m in available_models)
-            + "\n\nUse these names for `/set_api_key`, `/clear_api_key`, and `/switch_model`."
+            + "\n\nИспользуйте эти имена для `/set_api_key`, `/clear_api_key` и `/switch_model`."
         )
         await self.safe_reply(update, context, msg, parse_mode="Markdown")
 
@@ -164,19 +164,19 @@ class ModelHandler(BaseHandler):
 
         if not context.args or len(context.args) != 1:
             await update.message.reply_text(
-                f"Usage: /set_receipt_model <model>\nAvailable: {', '.join(ALLOWED_RECEIPT_MODELS)}"
+                f"Использование: /set_receipt_model <model>\nДоступно: {', '.join(ALLOWED_RECEIPT_MODELS)}"
             )
             return
 
         model_name = context.args[0]
         if model_name not in ALLOWED_RECEIPT_MODELS:
             await update.message.reply_text(
-                f"Invalid model name. Choose from: {', '.join(ALLOWED_RECEIPT_MODELS)}"
+                f"Некорректное имя модели. Выберите из: {', '.join(ALLOWED_RECEIPT_MODELS)}"
             )
             return
 
         self.user_receipt_model[user.id] = model_name
-        await update.message.reply_text(f"Receipt parsing model set to {model_name}.")
+        await update.message.reply_text(f"Модель для разбора чека установлена на {model_name}.")
     
     def get_receipt_model(self, user_id: int) -> str:
         """Get the receipt model for a user, or default."""

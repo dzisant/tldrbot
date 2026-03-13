@@ -14,7 +14,7 @@ WEBHOOK_URL = os.environ.get("WEBHOOK_URL")
 def validate_config():
     missing = [k for k in ["BOT_TOKEN", "OPENAI_API_KEY"] if not os.environ.get(k)]
     if missing:
-        raise ValueError(f"Missing: {', '.join(missing)}")
+        raise ValueError(f"Отсутствуют: {', '.join(missing)}")
 
 _DEFAULT_VIDEO_URL_PATTERNS = [
     r'https?://(www\.)?tiktok\.com/',
@@ -30,9 +30,9 @@ if _video_patterns_env:
     try:
         VIDEO_URL_PATTERNS = json.loads(_video_patterns_env)
         if not isinstance(VIDEO_URL_PATTERNS, list):
-            raise ValueError("VIDEO_URL_PATTERNS must be a JSON array")
+            raise ValueError("VIDEO_URL_PATTERNS должен быть массивом JSON")
     except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON in VIDEO_URL_PATTERNS environment variable: {e}")
+        raise ValueError(f"Некорректный JSON в переменной окружения VIDEO_URL_PATTERNS: {e}")
 else:
     VIDEO_URL_PATTERNS = _DEFAULT_VIDEO_URL_PATTERNS
 

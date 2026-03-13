@@ -48,7 +48,7 @@ class BaseHandler:
                 text=text
             )
         else:
-            logger.warning(f"No message or chat found in update for handler.")
+            logger.warning("В обновлении не найдено сообщение или чат для обработчика.")
             return None
     
     def log_analytics(self, update: Update, event_type: str, llm_name: Optional[str] = None):
