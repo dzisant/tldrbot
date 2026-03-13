@@ -85,5 +85,11 @@ class SummarizePlugin(Plugin):
         
         self.memory.set_summary_context(chat_id, progress_msg.message_id, messages)
         
+        logger.info(
+            "ChatGPT summary response for user %s in chat %s: %s",
+            user_id,
+            chat_id,
+            summary
+        )
         logger.info(f"Summary generated for user {user_id} in chat {chat_id} ({len(messages)} messages)")
 
