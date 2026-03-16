@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class RateLimiter:
-    def __init__(self, max_uses_per_day: int = 10):
+    def __init__(self, max_uses_per_day: int = 50):
         self.max_uses_per_day = max_uses_per_day
         self._usage: Dict[int, Dict] = {}
     
