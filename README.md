@@ -80,6 +80,44 @@ export DATABASE_URL="postgresql://..."  # For analytics (optional)
 python -m bot.main
 ```
 
+## Linux Service (systemd)
+
+This project includes a sample unit file at `deploy/tldrbot.service`.
+
+1. Copy the service file to systemd and edit paths/users:
+```bash
+sudo cp deploy/tldrbot.service /etc/systemd/system/tldrbot.service
+sudo nano /etc/systemd/system/tldrbot.service
+```
+
+2. Install dependencies in the environment the service will use:
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+```
+
+3. Create the environment file used by the service:
+```bash
+sudo nano /etc/tldrbot.env
+```
+
+Example `/etc/tldrbot.env`:
+```bash
+BOT_TOKEN="your_telegram_bot_token"
+OPENAI_API_KEY="your_openai_api_key"
+AI_MODEL="gpt-5-nano"
+DAILY_LIMIT="10"
+MAX_MESSAGES="400"
+```
+
+4. Enable and start the service:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now tldrbot
+sudo systemctl status tldrbot
+```
+
 ## Project Structure
 
 ```

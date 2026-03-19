@@ -127,7 +127,7 @@ class SummarizeHandler(BaseHandler):
                 "Сводка: [4-5 предложений]\n\n"
                 "Тон: [Выбери между: Позитивный, Негативный, Нейтральный]\n\n"
                 "События: [Укажи дату, время и суть предстоящих событий, если они есть]\n\n"
-                "Формат вывода: Только эмодзи для обозначения разделов, маркированные списки с символами • или -, и никаких символов разметки md формата.")
+                )
 
     def _format_summary(self, summary: str, user_name: str, message_count: int) -> str:
         return TextProcessor.format_summary_message(summary, user_name, message_count)

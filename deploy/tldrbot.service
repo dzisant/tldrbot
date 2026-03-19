@@ -1,0 +1,28 @@
+[Unit]
+Description=TLDRBot service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# TODO: set to your Linux user
+User=tldrbot
+Group=tldrbot
+WorkingDirectory=/opt/tldrbot
+
+# Prefer a virtualenv Python if you have one
+ExecStart=/opt/tldrbot/.venv/bin/python -m bot.main
+Restart=on-failure
+RestartSec=3
+
+# Load environment variables (token, API key, model, limits)
+EnvironmentFile=/etc/tldrbot.env
+
+# Basic hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
